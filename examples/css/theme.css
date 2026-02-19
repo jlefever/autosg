@@ -1,0 +1,62 @@
+:root {
+    --color-primary: #3b82f6;
+    --color-secondary: #10b981;
+    --color-background: #ffffff;
+    --color-text: #1f2937;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --spacing-unit: 0.25rem;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background-color: var(--color-background);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: calc(var(--spacing-unit) * 4);
+}
+
+.card {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: calc(var(--spacing-unit) * 6);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    padding: calc(var(--spacing-unit) * 2) calc(var(--spacing-unit) * 4);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.button:hover {
+    opacity: 0.9;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-background: #111827;
+        --color-text: #f9fafb;
+    }
+
+    .card {
+        border-color: #374151;
+    }
+}
