@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environment
+.venv/
+
+# IDE
+.vscode/
+.idea/
+.claude/settings.local.json
+*.swp
+*.swo
+*~
+
+# Secrets
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Annotated output
+*.annotated
+
+# Generated output
+output.csv

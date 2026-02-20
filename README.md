@@ -10,6 +10,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
+For the `llm-resolve` command, create a `.env` file with your API key:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-...
+```
+
 ## Usage
 
 ```
@@ -99,6 +105,27 @@ public class Example⁸ {
 | `curly-ratio` | `⦃id∶text⦄` | `⦃3∶count⦄` |
 | `superscript` | `textⁱᵈ` | `count³` |
 
+### `llm-resolve`
+
+Send an annotated source file to an LLM to resolve identifier references (emulating "Jump to Definition").
+
+```bash
+# Resolve a source file (annotated in memory)
+python -m autosg llm-resolve examples/java/Example.java
+
+# Resolve an already-annotated file
+python -m autosg llm-resolve examples/java/Example.java.annotated
+
+# Use a different model
+python -m autosg llm-resolve --model anthropic/claude-haiku-4-5-20251001 examples/java/Example.java
+```
+
+Output is JSON with three fields:
+
+- `definitions` — `[reference_id, definition_id]` pairs within the file
+- `external` — identifiers defined outside the file (stdlib, imports)
+- `errors` — identifiers that could not be resolved, with reasons
+
 ## Supported languages
 
 autosg supports 46 languages via tree-sitter-languages, with per-language identifier node types for accurate extraction:
@@ -124,5 +151,6 @@ autosg/
 ├── __init__.py       # package marker
 ├── __main__.py       # CLI entry point (click)
 ├── annotating.py     # encoding detection, annotation styles, annotate logic
+├── llmresolver.py    # LLM-based identifier resolution (via LiteLLM)
 └── parsing.py        # language detection, identifier types, tree-sitter parsing
 ```

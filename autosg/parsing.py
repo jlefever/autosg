@@ -11,7 +11,7 @@ from tree_sitter import Node, Parser, Tree
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore", FutureWarning)
-    from tree_sitter_languages import get_parser
+    from tree_sitter_languages import get_parser # type: ignore
 
 # ---------------------------------------------------------------------------
 # Language detection

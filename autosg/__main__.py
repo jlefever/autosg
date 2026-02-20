@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import csv
+import json
 import os
 import sys
 from collections.abc import Callable, Iterator
 from pathlib import Path
-from typing import TextIO
+from typing import Any, TextIO
 
 import click
 
@@ -186,6 +187,83 @@ def annotate_files(
         out_path.write_bytes(encode_output(annotated_utf8, enc))
         file_count += 1
     click.echo(f"Annotated {file_count} file(s), {global_id} identifier(s).")
+
+
+@cli.command("llm-resolve")
+@click.argument(
+    "path",
+    type=click.Path(exists=True, path_type=Path),
+)
+@click.option(
+    "--model",
+    default=None,
+    help="LiteLLM model identifier (default: anthropic/claude-sonnet-4-20250514).",
+)
+@click.option(
+    "--style",
+    type=click.Choice(sorted(ANNOTATION_STYLES.keys())),
+    default=DEFAULT_STYLE,
+    show_default=True,
+    help="Annotation style (ignored when input is already .annotated).",
+)
+@click.option(
+    "--no-cache",
+    is_flag=True,
+    default=False,
+    help="Skip the disk cache and always call the LLM.",
+)
+def llm_resolve(path: Path, model: str | None, style: str, no_cache: bool) -> None:
+    """Resolve identifier references using an LLM.
+
+    Accepts a source file (annotated in memory) or an .annotated file.
+    Prints the resolution JSON to stdout.
+    """
+    # Import lazily so litellm is not required for other subcommands.
+    from . import llmresolver
+
+    effective_model: str = model or llmresolver.DEFAULT_MODEL
+
+    if path.name.endswith(ANNOTATED_SUFFIX):
+        # Already annotated — read directly and infer language from base name.
+        ann_result: tuple[bytes, FileEncoding] | None = read_source_utf8(path)
+        if ann_result is None:
+            click.echo(f"Error: unsupported encoding for {path}.", err=True)
+            sys.exit(1)
+        annotated_text: str = ann_result[0].decode("utf-8")
+        base_name: str = path.name[: -len(ANNOTATED_SUFFIX)]
+        language: str | None = detect_language(path.parent / base_name)
+    else:
+        # Source file — annotate in memory.
+        language = detect_language(path)
+        if language is None:
+            click.echo(
+                f"Error: unsupported file extension {path.suffix!r} for {path}.",
+                err=True,
+            )
+            sys.exit(1)
+        src_result: tuple[bytes, FileEncoding] | None = read_source_utf8(path)
+        if src_result is None:
+            click.echo(f"Error: unsupported encoding for {path}.", err=True)
+            sys.exit(1)
+        utf8_bytes, _enc = src_result
+        annotation_style: AnnotationStyle = ANNOTATION_STYLES[style]
+        annotated_utf8, _next_id = annotate_source(
+            utf8_bytes, language, annotation_style, 0,
+        )
+        annotated_text = annotated_utf8.decode("utf-8")
+
+    if language is None:
+        click.echo(f"Error: cannot detect language for {path}.", err=True)
+        sys.exit(1)
+
+    try:
+        result: dict[str, Any] = llmresolver.resolve(
+            annotated_text, language, model=effective_model,
+            use_cache=not no_cache,
+        )
+    except (RuntimeError, ValueError) as exc:
+        raise click.ClickException(str(exc))
+    click.echo(json.dumps(result, indent=2))
 
 
 if __name__ == "__main__":
