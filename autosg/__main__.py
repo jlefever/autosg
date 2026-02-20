@@ -150,8 +150,8 @@ def annotate_files(
         click.echo(f"Removed {removed} .annotated file(s).")
         return
 
-    global_id: int = 0
     file_count: int = 0
+    total_ids: int = 0
     for file_path in resolve_source_paths(paths, recursive):
         language: str | None = detect_language(file_path)
         if language is None:
@@ -169,13 +169,12 @@ def annotate_files(
             )
             continue
         utf8_bytes, enc = result
-        annotated_utf8, global_id = annotate_source(
-            utf8_bytes, language, global_id,
-        )
+        annotated_utf8, next_id = annotate_source(utf8_bytes, language, 0)
         out_path: Path = file_path.parent / (file_path.name + ANNOTATED_SUFFIX)
         out_path.write_bytes(encode_output(annotated_utf8, enc))
         file_count += 1
-    click.echo(f"Annotated {file_count} file(s), {global_id} identifier(s).")
+        total_ids += next_id
+    click.echo(f"Annotated {file_count} file(s), {total_ids} identifier(s).")
 
 
 @cli.command("llm-resolve")
