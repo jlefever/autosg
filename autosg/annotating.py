@@ -1,4 +1,4 @@
-"""Encoding detection, annotation styles, and source annotation."""
+"""Encoding detection and source annotation."""
 
 from __future__ import annotations
 
@@ -73,57 +73,18 @@ def encode_output(utf8_bytes: bytes, enc: FileEncoding) -> bytes:
 
 
 # ---------------------------------------------------------------------------
-# Annotation styles
+# Annotation
 # ---------------------------------------------------------------------------
 
-_SUPERSCRIPT_DIGITS: str = "\u2070\u00b9\u00b2\u00b3\u2074\u2075\u2076\u2077\u2078\u2079"
 
-
-def _to_superscript(n: int) -> str:
-    return "".join(_SUPERSCRIPT_DIGITS[int(d)] for d in str(n))
-
-
-@dataclass(frozen=True)
-class AnnotationStyle:
-    """Defines how an identifier is annotated with its ID."""
-
-    name: str
-    open: str
-    sep: str
-    close: str
-    superscript: bool = False
-
-    def format(self, ident_id: int, text: str) -> str:
-        if self.superscript:
-            return text + _to_superscript(ident_id)
-        return f"{self.open}{ident_id}{self.sep}{text}{self.close}"
-
-
-ANNOTATION_STYLES: dict[str, AnnotationStyle] = {
-    s.name: s
-    for s in [
-        AnnotationStyle("guillemet-pipe", "\u00ab", "|", "\u00bb"),
-        AnnotationStyle("guillemet-colon", "\u00ab", ":", "\u00bb"),
-        AnnotationStyle("angle-pipe", "\u27e8", "|", "\u27e9"),
-        AnnotationStyle("angle-colon", "\u27e8", ":", "\u27e9"),
-        AnnotationStyle("section-dot", "\u00a7", "\u00b7", "\u00a7"),
-        AnnotationStyle("curly-ratio", "\u2983", "\u2236", "\u2984"),
-        AnnotationStyle("superscript", "", "", "", superscript=True),
-    ]
-}
-
-DEFAULT_STYLE: str = "guillemet-pipe"
-
-
-# ---------------------------------------------------------------------------
-# Annotate logic
-# ---------------------------------------------------------------------------
+def _format_identifier(ident_id: int, text: str) -> str:
+    """Format an identifier with its ID using guillemet-pipe style: «id|text»."""
+    return f"\u00ab{ident_id}|{text}\u00bb"
 
 
 def annotate_source(
     utf8_bytes: bytes,
     language: str,
-    style: AnnotationStyle,
     start_id: int,
 ) -> tuple[bytes, int]:
     """Annotate identifiers in UTF-8 source bytes.
@@ -147,7 +108,7 @@ def annotate_source(
         line: bytes = lines[row_idx]
         for byte_col, text, ident_id in sorted(entries, key=lambda e: e[0], reverse=True):
             text_bytes: bytes = text.encode("utf-8")
-            replacement: bytes = style.format(ident_id, text).encode("utf-8")
+            replacement: bytes = _format_identifier(ident_id, text).encode("utf-8")
             line = line[:byte_col] + replacement + line[byte_col + len(text_bytes) :]
         lines[row_idx] = line
 

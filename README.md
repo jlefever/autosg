@@ -48,20 +48,20 @@ id,path,row,col,text
 
 ### `annotate-files`
 
-Produce `.annotated` copies of source files with each identifier wrapped in a style marker and its ID.
+Produce `.annotated` copies of source files with each identifier wrapped in `«id|text»` markers.
 
 ```bash
-# Annotate a single file (default guillemet-pipe style)
+# Annotate a single file
 python -m autosg annotate-files examples/java/Example.java
 
-# Annotate recursively with a specific style
-python -m autosg annotate-files -r examples/ --style superscript
+# Annotate recursively
+python -m autosg annotate-files -r examples/
 
 # Remove all .annotated files
 python -m autosg annotate-files --clean -r examples/
 ```
 
-#### Example: `guillemet-pipe` (default)
+#### Example output
 
 ```java
 package «0|com».«1|example»;
@@ -76,34 +76,6 @@ public class «8|Example» {
     }
 }
 ```
-
-#### Example: `superscript`
-
-```java
-package com⁰.example¹;
-
-import java².util³.List⁴;
-
-public class Example⁸ {
-    private int count⁹;
-
-    public Example¹²(String¹³ name¹⁴) {
-        this.count¹⁵ = 0;
-    }
-}
-```
-
-#### All annotation styles
-
-| Name | Format | Example |
-|---|---|---|
-| `guillemet-pipe` | `«id\|text»` | `«3|count»` |
-| `guillemet-colon` | `«id:text»` | `«3:count»` |
-| `angle-pipe` | `⟨id\|text⟩` | `⟨3\|count⟩` |
-| `angle-colon` | `⟨id:text⟩` | `⟨3:count⟩` |
-| `section-dot` | `§id·text§` | `§3·count§` |
-| `curly-ratio` | `⦃id∶text⦄` | `⦃3∶count⦄` |
-| `superscript` | `textⁱᵈ` | `count³` |
 
 ### `llm-resolve`
 
@@ -146,11 +118,11 @@ Annotated output preserves the original encoding and BOM. Files with unsupported
 
 ## Project structure
 
-```
+```text
 autosg/
 ├── __init__.py       # package marker
 ├── __main__.py       # CLI entry point (click)
-├── annotating.py     # encoding detection, annotation styles, annotate logic
+├── annotating.py     # encoding detection and annotation logic
 ├── llmresolver.py    # LLM-based identifier resolution (via LiteLLM)
 └── parsing.py        # language detection, identifier types, tree-sitter parsing
 ```

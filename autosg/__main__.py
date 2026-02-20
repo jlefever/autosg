@@ -13,9 +13,6 @@ from typing import Any, TextIO
 import click
 
 from .annotating import (
-    ANNOTATION_STYLES,
-    AnnotationStyle,
-    DEFAULT_STYLE,
     FileEncoding,
     annotate_source,
     encode_output,
@@ -128,20 +125,13 @@ def dump_identifiers(paths: tuple[Path, ...], recursive: bool, output: Path | No
 @cli.command("annotate-files")
 @common_options
 @click.option(
-    "--style",
-    type=click.Choice(sorted(ANNOTATION_STYLES.keys())),
-    default=DEFAULT_STYLE,
-    show_default=True,
-    help="Annotation style.",
-)
-@click.option(
     "--clean",
     is_flag=True,
     default=False,
     help="Remove .annotated files instead of creating them.",
 )
 def annotate_files(
-    paths: tuple[Path, ...], recursive: bool, style: str, clean: bool,
+    paths: tuple[Path, ...], recursive: bool, clean: bool,
 ) -> None:
     """Annotate identifiers in source files, producing .annotated copies."""
     if clean:
@@ -160,7 +150,6 @@ def annotate_files(
         click.echo(f"Removed {removed} .annotated file(s).")
         return
 
-    annotation_style: AnnotationStyle = ANNOTATION_STYLES[style]
     global_id: int = 0
     file_count: int = 0
     for file_path in resolve_source_paths(paths, recursive):
@@ -181,7 +170,7 @@ def annotate_files(
             continue
         utf8_bytes, enc = result
         annotated_utf8, global_id = annotate_source(
-            utf8_bytes, language, annotation_style, global_id,
+            utf8_bytes, language, global_id,
         )
         out_path: Path = file_path.parent / (file_path.name + ANNOTATED_SUFFIX)
         out_path.write_bytes(encode_output(annotated_utf8, enc))
@@ -200,19 +189,12 @@ def annotate_files(
     help="LiteLLM model identifier (default: anthropic/claude-sonnet-4-20250514).",
 )
 @click.option(
-    "--style",
-    type=click.Choice(sorted(ANNOTATION_STYLES.keys())),
-    default=DEFAULT_STYLE,
-    show_default=True,
-    help="Annotation style (ignored when input is already .annotated).",
-)
-@click.option(
     "--no-cache",
     is_flag=True,
     default=False,
     help="Skip the disk cache and always call the LLM.",
 )
-def llm_resolve(path: Path, model: str | None, style: str, no_cache: bool) -> None:
+def llm_resolve(path: Path, model: str | None, no_cache: bool) -> None:
     """Resolve identifier references using an LLM.
 
     Accepts a source file (annotated in memory) or an .annotated file.
@@ -246,9 +228,8 @@ def llm_resolve(path: Path, model: str | None, style: str, no_cache: bool) -> No
             click.echo(f"Error: unsupported encoding for {path}.", err=True)
             sys.exit(1)
         utf8_bytes, _enc = src_result
-        annotation_style: AnnotationStyle = ANNOTATION_STYLES[style]
         annotated_utf8, _next_id = annotate_source(
-            utf8_bytes, language, annotation_style, 0,
+            utf8_bytes, language, 0,
         )
         annotated_text = annotated_utf8.decode("utf-8")
 
