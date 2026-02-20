@@ -1,0 +1,41 @@
+class BankAccount
+  «0|attr_reader» :owner, :balance
+
+  def «1|initialize»(«2|owner», «3|balance» = 0)
+    @owner = «4|owner»
+    @balance = «5|balance»
+  end
+
+  def «6|deposit»(«7|amount»)
+    «8|raise» ArgumentError, "Amount must be positive" unless «9|amount» > 0
+
+    @balance += «10|amount»
+    self
+  end
+
+  def «11|withdraw»(«12|amount»)
+    «13|raise» ArgumentError, "Amount must be positive" unless «14|amount» > 0
+    «15|raise» "Insufficient funds" if «16|amount» > @balance
+
+    @balance -= «17|amount»
+    self
+  end
+
+  def «18|transfer»(«19|other_account», «20|amount»)
+    «21|withdraw»(«22|amount»)
+    «23|other_account».«24|deposit»(«25|amount»)
+  end
+
+  def «26|to_s»
+    "#{@owner}: $#{'%.2f' % @balance}"
+  end
+end
+
+«27|alice» = BankAccount.«28|new»("Alice", 1000)
+«29|bob» = BankAccount.«30|new»("Bob", 500)
+
+«31|alice».«32|deposit»(200)
+«33|alice».«34|transfer»(«35|bob», 150)
+
+«36|puts» «37|alice»
+«38|puts» «39|bob»

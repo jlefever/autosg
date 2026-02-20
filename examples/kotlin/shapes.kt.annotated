@@ -1,0 +1,46 @@
+import «0|kotlin».«1|math».«2|PI»
+import «3|kotlin».«4|math».«5|sqrt»
+
+sealed class «6|Shape» {
+    abstract fun «7|area»(): «8|Double»
+    abstract fun «9|perimeter»(): «10|Double»
+}
+
+data class «11|Circle»(val «12|radius»: «13|Double») : «14|Shape»() {
+    override fun «15|area»(): «16|Double» = «17|PI» * «18|radius» * «19|radius»
+    override fun «20|perimeter»(): «21|Double» = 2 * «22|PI» * «23|radius»
+}
+
+data class «24|Rectangle»(val «25|width»: «26|Double», val «27|height»: «28|Double») : «29|Shape»() {
+    override fun «30|area»(): «31|Double» = «32|width» * «33|height»
+    override fun «34|perimeter»(): «35|Double» = 2 * («36|width» + «37|height»)
+}
+
+data class «38|Triangle»(val «39|a»: «40|Double», val «41|b»: «42|Double», val «43|c»: «44|Double») : «45|Shape»() {
+    override fun «46|area»(): «47|Double» {
+        val «48|s» = «49|perimeter»() / 2
+        return «50|sqrt»(«51|s» * («52|s» - «53|a») * («54|s» - «55|b») * («56|s» - «57|c»))
+    }
+
+    override fun «58|perimeter»(): «59|Double» = «60|a» + «61|b» + «62|c»
+}
+
+fun «63|describeShape»(«64|shape»: «65|Shape»): «66|String» {
+    return when («67|shape») {
+        is «68|Circle» -> "Circle with radius ${«69|shape».«70|radius»}"
+        is «71|Rectangle» -> "Rectangle ${«72|shape».«73|width»}x${«74|shape».«75|height»}"
+        is «76|Triangle» -> "Triangle with sides ${«77|shape».«78|a»}, ${«79|shape».«80|b»}, ${«81|shape».«82|c»}"
+    }
+}
+
+fun «83|main»() {
+    val «84|shapes» = «85|listOf»(
+        «86|Circle»(5.0),
+        «87|Rectangle»(3.0, 4.0),
+        «88|Triangle»(3.0, 4.0, 5.0)
+    )
+
+    for («89|shape» in «90|shapes») {
+        «91|println»("${«92|describeShape»(«93|shape»)}: area=${«94|shape».«95|area»()}, perimeter=${«96|shape».«97|perimeter»()}")
+    }
+}

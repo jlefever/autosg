@@ -1,0 +1,41 @@
+object «0|OptionUtils» {
+  def «1|parseInt»(«2|s»: «3|String»): «4|Option»[«5|Int»] = {
+    try {
+      «6|Some»(«7|s».«8|trim».«9|toInt»)
+    } catch {
+      case _: «10|NumberFormatException» => «11|None»
+    }
+  }
+
+  def «12|divide»(«13|a»: «14|Double», «15|b»: «16|Double»): «17|Option»[«18|Double»] = {
+    if («19|b» «20|==» 0) «21|None» else «22|Some»(«23|a» «24|/» «25|b»)
+  }
+
+  def «26|lookup»[«27|K», «28|V»](«29|map»: «30|Map»[«31|K», «32|V»], «33|key»: «34|K»): «35|Option»[«36|V»] = {
+    «37|map».«38|get»(«39|key»)
+  }
+
+  def «40|firstPositive»(«41|numbers»: «42|List»[«43|Int»]): «44|Option»[«45|Int»] = {
+    «46|numbers».«47|find»(_ «48|>» 0)
+  }
+}
+
+object «49|Main» extends «50|App» {
+  val «51|inputs» = «52|List»("42", "hello", "17", "", "99")
+
+  val «53|parsed» = «54|inputs».«55|flatMap»(«56|OptionUtils».«57|parseInt»)
+  «58|println»(«59|s»"Parsed numbers: $«60|parsed»")
+
+  val «61|result» = for {
+    «62|a» <- «63|OptionUtils».«64|parseInt»("100")
+    «65|b» <- «66|OptionUtils».«67|parseInt»("3")
+    «68|quotient» <- «69|OptionUtils».«70|divide»(«71|a».«72|toDouble», «73|b».«74|toDouble»)
+  } yield «75|quotient»
+
+  «76|println»(«77|s»"Division result: $«78|result»")
+
+  val «79|config» = «80|Map»("host" «81|->» "localhost", "port" «82|->» "8080")
+  val «83|host» = «84|OptionUtils».«85|lookup»(«86|config», "host").«87|getOrElse»("unknown")
+  val «88|timeout» = «89|OptionUtils».«90|lookup»(«91|config», "timeout").«92|getOrElse»("30")
+  «93|println»(«94|s»"Host: $«95|host», Timeout: $«96|timeout»")
+}

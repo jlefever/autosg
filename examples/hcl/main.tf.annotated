@@ -1,0 +1,52 @@
+«0|terraform» {
+  «1|required_version» = ">= 1.5.0"
+
+  «2|required_providers» {
+    «3|aws» = {
+      «4|source»  = "hashicorp/aws"
+      «5|version» = "~> 5.0"
+    }
+  }
+
+  «6|backend» "s3" {
+    «7|bucket» = "terraform-state-bucket"
+    «8|key»    = "prod/terraform.tfstate"
+    «9|region» = "us-east-1"
+  }
+}
+
+«10|provider» "aws" {
+  «11|region» = «12|var».«13|aws_region»
+}
+
+«14|variable» "aws_region" {
+  «15|description» = "AWS region to deploy resources"
+  «16|type»        = «17|string»
+  «18|default»     = "us-east-1"
+}
+
+«19|variable» "instance_type" {
+  «20|description» = "EC2 instance type"
+  «21|type»        = «22|string»
+  «23|default»     = "t3.micro"
+}
+
+«24|resource» "aws_instance" "web_server" {
+  «25|ami»           = "ami-0c55b159cbfafe1f0"
+  «26|instance_type» = «27|var».«28|instance_type»
+
+  «29|tags» = {
+    «30|Name»        = "web-server"
+    «31|Environment» = "production"
+  }
+}
+
+«32|output» "instance_id" {
+  «33|description» = "ID of the EC2 instance"
+  «34|value»       = «35|aws_instance».«36|web_server».«37|id»
+}
+
+«38|output» "public_ip" {
+  «39|description» = "Public IP of the EC2 instance"
+  «40|value»       = «41|aws_instance».«42|web_server».«43|public_ip»
+}

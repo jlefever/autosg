@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct {
+    int «0|rows»;
+    int «1|cols»;
+    double *«2|data»;
+} «3|Matrix»;
+
+«4|Matrix» *«5|matrix_create»(int «6|rows», int «7|cols») {
+    «8|Matrix» *«9|m» = «10|malloc»(sizeof(«11|Matrix»));
+    «12|m»->«13|rows» = «14|rows»;
+    «15|m»->«16|cols» = «17|cols»;
+    «18|m»->«19|data» = «20|calloc»(«21|rows» * «22|cols», sizeof(double));
+    return «23|m»;
+}
+
+void «24|matrix_free»(«25|Matrix» *«26|m») {
+    «27|free»(«28|m»->«29|data»);
+    «30|free»(«31|m»);
+}
+
+double «32|matrix_get»(const «33|Matrix» *«34|m», int «35|row», int «36|col») {
+    return «37|m»->«38|data»[«39|row» * «40|m»->«41|cols» + «42|col»];
+}
+
+void «43|matrix_set»(«44|Matrix» *«45|m», int «46|row», int «47|col», double «48|value») {
+    «49|m»->«50|data»[«51|row» * «52|m»->«53|cols» + «54|col»] = «55|value»;
+}
+
+«56|Matrix» *«57|matrix_multiply»(const «58|Matrix» *«59|a», const «60|Matrix» *«61|b») {
+    «62|Matrix» *«63|result» = «64|matrix_create»(«65|a»->«66|rows», «67|b»->«68|cols»);
+    for (int «69|i» = 0; «70|i» < «71|a»->«72|rows»; «73|i»++) {
+        for (int «74|j» = 0; «75|j» < «76|b»->«77|cols»; «78|j»++) {
+            double «79|sum» = 0.0;
+            for (int «80|k» = 0; «81|k» < «82|a»->«83|cols»; «84|k»++) {
+                «85|sum» += «86|matrix_get»(«87|a», «88|i», «89|k») * «90|matrix_get»(«91|b», «92|k», «93|j»);
+            }
+            «94|matrix_set»(«95|result», «96|i», «97|j», «98|sum»);
+        }
+    }
+    return «99|result»;
+}
+
+int «100|main»(void) {
+    «101|Matrix» *«102|a» = «103|matrix_create»(2, 2);
+    «104|matrix_set»(«105|a», 0, 0, 1.0);
+    «106|matrix_set»(«107|a», 0, 1, 2.0);
+    «108|matrix_set»(«109|a», 1, 0, 3.0);
+    «110|matrix_set»(«111|a», 1, 1, 4.0);
+
+    «112|Matrix» *«113|b» = «114|matrix_create»(2, 2);
+    «115|matrix_set»(«116|b», 0, 0, 5.0);
+    «117|matrix_set»(«118|b», 0, 1, 6.0);
+    «119|matrix_set»(«120|b», 1, 0, 7.0);
+    «121|matrix_set»(«122|b», 1, 1, 8.0);
+
+    «123|Matrix» *«124|c» = «125|matrix_multiply»(«126|a», «127|b»);
+
+    for (int «128|i» = 0; «129|i» < «130|c»->«131|rows»; «132|i»++) {
+        for (int «133|j» = 0; «134|j» < «135|c»->«136|cols»; «137|j»++) {
+            «138|printf»("%.1f ", «139|matrix_get»(«140|c», «141|i», «142|j»));
+        }
+        «143|printf»("\n");
+    }
+
+    «144|matrix_free»(«145|a»);
+    «146|matrix_free»(«147|b»);
+    «148|matrix_free»(«149|c»);
+    return 0;
+}

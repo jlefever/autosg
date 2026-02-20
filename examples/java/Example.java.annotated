@@ -1,0 +1,39 @@
+package «0|com».«1|example»;
+
+import «2|java».«3|util».«4|List»;
+import «5|java».«6|util».«7|ArrayList»;
+
+public class «8|Example» {
+    private int «9|count»;
+    private «10|String» «11|name»;
+
+    public «12|Example»(«13|String» «14|name») {
+        this.«15|count» = 0;
+        this.«16|name» = «17|name»;
+    }
+
+    public void «18|increment»() {
+        «19|count»++;
+    }
+
+    public int «20|getCount»() {
+        return «21|count»;
+    }
+
+    public static «22|List»<«23|String»> «24|buildList»(«25|String»[] «26|items») {
+        «27|List»<«28|String»> «29|result» = new «30|ArrayList»<>();
+        for («31|String» «32|item» : «33|items») {
+            «34|result».«35|add»(«36|item»);
+        }
+        return «37|result»;
+    }
+
+    public static void «38|main»(«39|String»[] «40|args») {
+        «41|Example» «42|ex» = new «43|Example»("demo");
+        «44|ex».«45|increment»();
+        «46|System».«47|out».«48|println»(«49|ex».«50|getCount»());
+
+        «51|List»<«52|String»> «53|list» = «54|buildList»(«55|args»);
+        «56|System».«57|out».«58|println»(«59|list».«60|size»());
+    }
+}

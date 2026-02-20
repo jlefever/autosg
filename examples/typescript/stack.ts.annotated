@@ -1,0 +1,36 @@
+interface «0|Stackable»<«1|T»> {
+  «2|push»(«3|item»: «4|T»): void;
+  «5|pop»(): «6|T» | undefined;
+  «7|peek»(): «8|T» | undefined;
+  «9|isEmpty»(): boolean;
+}
+
+class «10|Stack»<«11|T»> implements «12|Stackable»<«13|T»> {
+  private «14|items»: «15|T»[] = [];
+
+  «16|push»(«17|item»: «18|T»): void {
+    this.«19|items».«20|push»(«21|item»);
+  }
+
+  «22|pop»(): «23|T» | undefined {
+    return this.«24|items».«25|pop»();
+  }
+
+  «26|peek»(): «27|T» | undefined {
+    return this.«28|items»[this.«29|items».«30|length» - 1];
+  }
+
+  «31|isEmpty»(): boolean {
+    return this.«32|items».«33|length» === 0;
+  }
+
+  get «34|size»(): number {
+    return this.«35|items».«36|length»;
+  }
+}
+
+const «37|numberStack» = new «38|Stack»<number>();
+«39|numberStack».«40|push»(42);
+«41|numberStack».«42|push»(17);
+«43|console».«44|log»(«45|numberStack».«46|peek»());
+«47|console».«48|log»(«49|numberStack».«50|pop»());

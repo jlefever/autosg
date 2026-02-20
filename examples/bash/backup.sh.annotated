@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+«0|SOURCE_DIR»="${«1|1»:-.}"
+«2|BACKUP_DIR»="${«3|2»:-/tmp/backup}"
+«4|TIMESTAMP»=$(date +%Y%m%d_%H%M%S)
+«5|ARCHIVE_NAME»="backup_${«6|TIMESTAMP»}.tar.gz"
+
+log_info() {
+    echo "[INFO] $(date '+%H:%M:%S') $*"
+}
+
+log_error() {
+    echo "[ERROR] $(date '+%H:%M:%S') $*" >&2
+}
+
+create_backup() {
+    local «7|source»="$«8|1»"
+    local «9|dest»="$«10|2»"
+    local «11|archive»="$«12|3»"
+
+    mkdir -p "$«13|dest»"
+
+    if tar -czf "${«14|dest»}/${«15|archive»}" -C "$«16|source»" .; then
+        log_info "Backup created: ${«17|dest»}/${«18|archive»}"
+    else
+        log_error "Failed to create backup"
+        return 1
+    fi
+}
+
+cleanup_old_backups() {
+    local «19|backup_dir»="$«20|1»"
+    local «21|keep_count»="${«22|2»:-5}"
+
+    local «23|count»
+    «24|count»=$(find "$«25|backup_dir»" -name "backup_*.tar.gz" | wc -l)
+
+    if [ "$«26|count»" -gt "$«27|keep_count»" ]; then
+        find "$«28|backup_dir»" -name "backup_*.tar.gz" -printf '%T@ %p\n' \
+            | sort -n \
+            | head -n "$((«29|count» - «30|keep_count»))" \
+            | cut -d' ' -f2- \
+            | xargs rm -f
+        log_info "Cleaned up old backups, kept last ${«31|keep_count»}"
+    fi
+}
+
+create_backup "$«32|SOURCE_DIR»" "$«33|BACKUP_DIR»" "$«34|ARCHIVE_NAME»"
+cleanup_old_backups "$«35|BACKUP_DIR»"

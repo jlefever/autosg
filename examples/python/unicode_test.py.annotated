@@ -1,0 +1,5 @@
+«0|greeting» = "Hello"
+«1|café» = "latte"  # identifier with multi-byte char, é = 2 bytes
+«2|x» = "données"  # multi-byte in string, then identifier on next lines
+«3|résumé» = «4|café»  # both identifiers have multi-byte chars
+«5|print»(«6|café», «7|résumé»)

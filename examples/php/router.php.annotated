@@ -1,0 +1,55 @@
+<?php
+
+class «0|Router» {
+    private array $«1|routes» = [];
+
+    public function «2|get»(string $«3|path», callable $«4|handler»): «5|self» {
+        $«6|this»->«7|routes»['GET'][$«8|path»] = $«9|handler»;
+        return $«10|this»;
+    }
+
+    public function «11|post»(string $«12|path», callable $«13|handler»): «14|self» {
+        $«15|this»->«16|routes»['POST'][$«17|path»] = $«18|handler»;
+        return $«19|this»;
+    }
+
+    public function «20|dispatch»(string $«21|method», string $«22|uri»): ?string {
+        $«23|handler» = $«24|this»->«25|routes»[$«26|method»][$«27|uri»] ?? null;
+        if ($«28|handler» === null) {
+            return null;
+        }
+        return $«29|handler»();
+    }
+}
+
+class «30|JsonResponse» {
+    public static function «31|create»(array $«32|data», int $«33|status» = 200): string {
+        «34|http_response_code»($«35|status»);
+        «36|header»('Content-Type: application/json');
+        return «37|json_encode»($«38|data»);
+    }
+}
+
+$«39|router» = new «40|Router»();
+
+$«41|router»->«42|get»('/api/users', function () {
+    $«43|users» = [
+        ['id' => 1, 'name' => 'Alice'],
+        ['id' => 2, 'name' => 'Bob'],
+    ];
+    return «44|JsonResponse»::«45|create»(['users' => $«46|users»]);
+});
+
+$«47|router»->«48|post»('/api/users', function () {
+    return «49|JsonResponse»::«50|create»(['created' => true], 201);
+});
+
+$«51|method» = $«52|_SERVER»['REQUEST_METHOD'] ?? 'GET';
+$«53|uri» = $«54|_SERVER»['REQUEST_URI'] ?? '/';
+$«55|response» = $«56|router»->«57|dispatch»($«58|method», $«59|uri»);
+
+if ($«60|response» === null) {
+    echo «61|JsonResponse»::«62|create»(['error' => 'Not Found'], 404);
+} else {
+    echo $«63|response»;
+}

@@ -1,0 +1,52 @@
+#include <algorithm>
+#include <iostream>
+#include <string>
+#include <vector>
+
+template <typename «0|T»>
+class «1|SortedCollection» {
+public:
+    void «2|add»(const «3|T»& «4|item») {
+        «5|items_».«6|push_back»(«7|item»);
+        «8|std»::«9|sort»(«10|items_».«11|begin»(), «12|items_».«13|end»());
+    }
+
+    const «14|T»& «15|at»(size_t «16|index») const {
+        return «17|items_».«18|at»(«19|index»);
+    }
+
+    size_t «20|size»() const {
+        return «21|items_».«22|size»();
+    }
+
+    bool «23|contains»(const «24|T»& «25|item») const {
+        return «26|std»::«27|binary_search»(«28|items_».«29|begin»(), «30|items_».«31|end»(), «32|item»);
+    }
+
+    void «33|print»() const {
+        for (const auto& «34|item» : «35|items_») {
+            «36|std»::«37|cout» << «38|item» << " ";
+        }
+        «39|std»::«40|cout» << «41|std»::«42|endl»;
+    }
+
+private:
+    «43|std»::«44|vector»<«45|T»> «46|items_»;
+};
+
+int «47|main»() {
+    «48|SortedCollection»<int> «49|numbers»;
+    «50|numbers».«51|add»(42);
+    «52|numbers».«53|add»(17);
+    «54|numbers».«55|add»(99);
+    «56|numbers».«57|add»(3);
+    «58|numbers».«59|print»();
+
+    «60|SortedCollection»<«61|std»::«62|string»> «63|words»;
+    «64|words».«65|add»("banana");
+    «66|words».«67|add»("apple");
+    «68|words».«69|add»("cherry");
+    «70|words».«71|print»();
+
+    return 0;
+}

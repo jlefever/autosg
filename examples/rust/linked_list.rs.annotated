@@ -1,0 +1,45 @@
+enum «0|List»<«1|T»> {
+    «2|Cons»(«3|T», «4|Box»<«5|List»<«6|T»>>),
+    «7|Nil»,
+}
+
+impl<«8|T»: «9|std»::«10|fmt»::«11|Display»> «12|List»<«13|T»> {
+    fn «14|new»() -> «15|Self» {
+        «16|List»::«17|Nil»
+    }
+
+    fn «18|prepend»(self, «19|value»: «20|T») -> «21|Self» {
+        «22|List»::«23|Cons»(«24|value», «25|Box»::«26|new»(self))
+    }
+
+    fn «27|len»(&self) -> usize {
+        match self {
+            «28|List»::«29|Cons»(_, «30|tail») => 1 + «31|tail».«32|len»(),
+            «33|List»::«34|Nil» => 0,
+        }
+    }
+
+    fn «35|to_string»(&self) -> «36|String» {
+        match self {
+            «37|List»::«38|Cons»(«39|head», «40|tail») => {
+                let «41|rest» = «42|tail».«43|to_string»();
+                if «44|rest».«45|is_empty»() {
+                    «46|format»!("{}", «47|head»)
+                } else {
+                    «48|format»!("{} -> {}", «49|head», «50|rest»)
+                }
+            }
+            «51|List»::«52|Nil» => «53|String»::«54|new»(),
+        }
+    }
+}
+
+fn «55|main»() {
+    let «56|list» = «57|List»::«58|new»()
+        .«59|prepend»(3)
+        .«60|prepend»(2)
+        .«61|prepend»(1);
+
+    «62|println»!("Length: {}", «63|list».«64|len»());
+    «65|println»!("List: {}", «66|list».«67|to_string»());
+}

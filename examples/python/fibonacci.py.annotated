@@ -1,0 +1,17 @@
+from «0|collections».«1|abc» import «2|Iterator»
+
+
+def «3|fibonacci»(«4|limit»: «5|int») -> «6|Iterator»[«7|int»]:
+    «8|a», «9|b» = 0, 1
+    while «10|a» < «11|limit»:
+        yield «12|a»
+        «13|a», «14|b» = «15|b», «16|a» + «17|b»
+
+
+def «18|main»() -> None:
+    for «19|num» in «20|fibonacci»(100):
+        «21|print»(«22|num»)
+
+
+if «23|__name__» == "__main__":
+    «24|main»()

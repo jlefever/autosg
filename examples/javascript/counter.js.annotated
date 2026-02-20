@@ -1,0 +1,27 @@
+class «0|Counter» {
+  «1|constructor»(«2|initialValue») {
+    this.«3|count» = «4|initialValue» || 0;
+  }
+
+  «5|increment»() {
+    this.«6|count» += 1;
+    return this;
+  }
+
+  «7|decrement»() {
+    this.«8|count» -= 1;
+    return this;
+  }
+
+  «9|getValue»() {
+    return this.«10|count»;
+  }
+}
+
+function «11|createCounter»(«12|start») {
+  return new «13|Counter»(«14|start»);
+}
+
+const «15|myCounter» = «16|createCounter»(10);
+«17|myCounter».«18|increment»().«19|increment»().«20|decrement»();
+«21|console».«22|log»(«23|myCounter».«24|getValue»());

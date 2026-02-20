@@ -1,0 +1,37 @@
+package «0|main»
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+)
+
+type «1|HealthResponse» struct {
+	«2|Status»  «3|string» `json:"status"`
+	«4|Version» «5|string» `json:"version"`
+}
+
+func «6|healthHandler»(«7|w» «8|http».«9|ResponseWriter», «10|r» *«11|http».«12|Request») {
+	«13|resp» := «14|HealthResponse»{
+		«15|Status»:  "ok",
+		«16|Version»: "1.0.0",
+	}
+	«17|w».«18|Header»().«19|Set»("Content-Type", "application/json")
+	«20|json».«21|NewEncoder»(«22|w»).«23|Encode»(«24|resp»)
+}
+
+func «25|helloHandler»(«26|w» «27|http».«28|ResponseWriter», «29|r» *«30|http».«31|Request») {
+	«32|name» := «33|r».«34|URL».«35|Query»().«36|Get»("name")
+	if «37|name» == "" {
+		«38|name» = "World"
+	}
+	«39|fmt».«40|Fprintf»(«41|w», "Hello, %s!", «42|name»)
+}
+
+func «43|main»() {
+	«44|http».«45|HandleFunc»("/health", «46|healthHandler»)
+	«47|http».«48|HandleFunc»("/hello", «49|helloHandler»)
+	«50|log».«51|Println»("Starting server on :8080")
+	«52|log».«53|Fatal»(«54|http».«55|ListenAndServe»(":8080", nil))
+}

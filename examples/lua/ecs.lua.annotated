@@ -1,0 +1,77 @@
+local «0|Entity» = {}
+«1|Entity».«2|__index» = «3|Entity»
+
+function «4|Entity».«5|new»(«6|id»)
+    local «7|self» = «8|setmetatable»({}, «9|Entity»)
+    «10|self».«11|id» = «12|id»
+    «13|self».«14|components» = {}
+    return «15|self»
+end
+
+function «16|Entity»:«17|addComponent»(«18|name», «19|data»)
+    «20|self».«21|components»[«22|name»] = «23|data»
+    return «24|self»
+end
+
+function «25|Entity»:«26|getComponent»(«27|name»)
+    return «28|self».«29|components»[«30|name»]
+end
+
+function «31|Entity»:«32|hasComponent»(«33|name»)
+    return «34|self».«35|components»[«36|name»] ~= nil
+end
+
+local «37|World» = {}
+«38|World».«39|__index» = «40|World»
+
+function «41|World».«42|new»()
+    local «43|self» = «44|setmetatable»({}, «45|World»)
+    «46|self».«47|entities» = {}
+    «48|self».«49|nextId» = 1
+    return «50|self»
+end
+
+function «51|World»:«52|createEntity»()
+    local «53|entity» = «54|Entity».«55|new»(«56|self».«57|nextId»)
+    «58|self».«59|nextId» = «60|self».«61|nextId» + 1
+    «62|table».«63|insert»(«64|self».«65|entities», «66|entity»)
+    return «67|entity»
+end
+
+function «68|World»:«69|query»(...)
+    local «70|required» = {...}
+    local «71|results» = {}
+    for «72|_», «73|entity» in «74|ipairs»(«75|self».«76|entities») do
+        local «77|match» = true
+        for «78|_», «79|comp» in «80|ipairs»(«81|required») do
+            if not «82|entity»:«83|hasComponent»(«84|comp») then
+                «85|match» = false
+                break
+            end
+        end
+        if «86|match» then
+            «87|table».«88|insert»(«89|results», «90|entity»)
+        end
+    end
+    return «91|results»
+end
+
+local «92|world» = «93|World».«94|new»()
+
+local «95|player» = «96|world»:«97|createEntity»()
+«98|player»:«99|addComponent»("position", {«100|x» = 0, «101|y» = 0})
+«102|player»:«103|addComponent»("velocity", {«104|x» = 1, «105|y» = 0})
+«106|player»:«107|addComponent»("health", {«108|current» = 100, «109|max» = 100})
+
+local «110|wall» = «111|world»:«112|createEntity»()
+«113|wall»:«114|addComponent»("position", {«115|x» = 5, «116|y» = 5})
+«117|wall»:«118|addComponent»("solid", {«119|blocking» = true})
+
+local «120|movable» = «121|world»:«122|query»("position", "velocity")
+for «123|_», «124|entity» in «125|ipairs»(«126|movable») do
+    local «127|pos» = «128|entity»:«129|getComponent»("position")
+    local «130|vel» = «131|entity»:«132|getComponent»("velocity")
+    «133|pos».«134|x» = «135|pos».«136|x» + «137|vel».«138|x»
+    «139|pos».«140|y» = «141|pos».«142|y» + «143|vel».«144|y»
+    «145|print»(«146|string».«147|format»("Entity %d moved to (%d, %d)", «148|entity».«149|id», «150|pos».«151|x», «152|pos».«153|y»))
+end
